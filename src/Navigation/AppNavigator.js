@@ -2,15 +2,77 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screen/Home';
 import Notificaton from '../screen/Notification';
+import DrawerNavigator from './DrawerNavigator';
+import Login from '../screen/Login';
+import Signup from '../screen/Signup';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
 
   return (
-    <Stack.Navigator initialRouteName="home">
-      <Stack.Screen name="home" component={Home} options={{title: 'Locations'}} />
-      <Stack.Screen name="notificaton" component={Notificaton} />
+    <Stack.Navigator initialRouteName="Drawer">
+      <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Home"
+        options={{
+          title: 'Locations',
+          headerStyle: {
+            backgroundColor: '#64748B',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: "#fff"
+          },
+        }}>
+        {(props) => <Home {...props} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="Notification"
+        options={{
+          title: 'Status',
+          headerStyle: {
+            backgroundColor: '#64748B',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: "#fff"
+          },
+        }}>
+        {(props) => <Notificaton {...props} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="Login"
+        options={{
+          title: 'Login',
+          headerStyle: {
+            backgroundColor: '#64748B',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: "#fff"
+          },
+        }}>
+        {(props) => <Login {...props} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="Signup"
+        options={{
+          title: 'Signup',
+          headerStyle: {
+            backgroundColor: '#64748B',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: "#fff"
+          },
+        }}>
+        {(props) => <Signup {...props} />}
+      </Stack.Screen>
+
     </Stack.Navigator>
   )
 }

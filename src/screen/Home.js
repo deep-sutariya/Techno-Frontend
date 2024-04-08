@@ -1,13 +1,48 @@
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Button } from 'react-native'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import axios from 'axios';
 
-import { getLocation } from '../utils/getLocation';
-import { isInArea } from '../utils/isInArea';
 import checkLocation from '../utils/checkLocation';
 
+import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StatusDetail } from '../contex/statusContex';
+import getLocation from '../utils/getLocation';
+
+import { registerForPushNotificationsAsync, setupNotifications } from '../utils/sendNotification';
+import isNotificationExpired from '../utils/checkNotiExpire';
+
+
 const Home = () => {
-    const [inSameArea, setInSameArea] = useState(false);
+    const { inSameArea, setInSameArea, locationList, setLocationList } = useContext(StatusDetail);
+
+    const [expoPushToken, setExpoPushToken] = useState('');
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => {
+            setExpoPushToken(token)
+        });
+        fetchLocation();
+    }, []);
+
+    useEffect(()=>{
+        console.log(expoPushToken);
+    },[expoPushToken])
+
+    const sendNoti = async (title,body,id) => {
+        const ack = await axios.post("http://192.168.2.195:5000/sendnotification", {title,body,id});
+    }
+
+    useEffect(() => {
+        console.log(inSameArea);
+        if (inSameArea?.data?._id!=undefined && inSameArea?.status && loc!=null) {
+            console.log("Id-->",inSameArea?.data?._id);
+            sendNoti(inSameArea?.data?.address,"Task1, Task2, Task3",inSameArea?.data?._id);
+        }
+    }, [inSameArea])
+
 
     const [loading, setLoading] = useState(false);
     const [flag, setFlag] = useState(false);
@@ -15,47 +50,43 @@ const Home = () => {
     const [location, setLocation] = useState("");
     const [fetchlocation, setFetchlocation] = useState([]);
 
-    let loc = getLocation();
+    const [loc, setLoc] = useState(null);
 
-    const [userLocations, setUserLocations] = useState([]);
-    const [locationList, setLocationList] = useState([]);
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            getLocation().then((newLoc)=>setLoc(newLoc))
+        }, 5000);
+        
+        return () => clearInterval(intervalId);
+    },[]);
 
-    const fetchData = async () => {
-        if (loc.lat && loc.lon) {
-            try {
-                const data = await isInArea(loc);
-                setUserLocations(data);
-            } catch (error) {
-                console.log("Error fetching data:", error);
-            }
-        }
-    };
+    useEffect(() => {
+        console.log("Location:", loc);
+    }, [loc]);
+
+
+
+    // ------------------------------------------
 
     const fetchLocation = async () => {
         try {
-            const res = await axios.post("http://192.168.104.115:5000/getlocationlist");
+            const res = await axios.post("http://192.168.2.195:5000/getlocationlist");
             setLocationList(res?.data?.data);
         } catch (e) {
             console.log(e);
         }
     };
 
-    const checkLocationAndUpdate = () => {
-        fetchData();
-        fetchLocation();
-    };
+    // useEffect(() => {
+    //     fetchLocation();
+    // }, []);
 
     useEffect(() => {
-        const intervalId = setInterval(checkLocationAndUpdate, 10000);
-        return () => clearInterval(intervalId);
-    }, []);
-
-    useEffect(() => {
-        setInSameArea(checkLocation(userLocations, locationList));
-        console.log("U-->",userLocations);
-    }, [userLocations, locationList]);
-
-
+        let data = checkLocation(loc, locationList)
+        if(JSON.stringify(inSameArea) !== JSON.stringify(data)){
+            setInSameArea(data);
+        }
+    }, [loc, locationList]);
 
 
     const handleFetch = async () => {
@@ -63,12 +94,7 @@ const Home = () => {
             try {
                 setFetchlocation([])
                 setLoading(true);
-                const data = await axios.get(`https://trueway-geocoding.p.rapidapi.com/Geocode?language=en&address=${location}`, {
-                    headers: {
-                        'X-RapidAPI-Key': '1aecf3ac76mshe524bcc63f5c710p10f501jsn24c678f969cb',
-                        'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
-                    }
-                })
+                const data = await axios.post(`http://192.168.2.195:5000/fetchlocation`, { location });
                 const info = Object.keys(data?.data?.results).map((val) => {
                     return data?.data?.results[val];
                 });
@@ -82,7 +108,7 @@ const Home = () => {
 
     const handleAdd = async () => {
         try {
-            const res = await axios.post("http://192.168.104.115:5000/addlocation", fetchlocation);
+            const res = await axios.post("http://192.168.2.195:5000/addlocation", fetchlocation);
             if (res?.status === 500) {
                 alert(res?.data?.message)
             }
@@ -98,14 +124,48 @@ const Home = () => {
         }
     }
 
+    const confirmShow = (id) => {
+        Alert.alert(
+            'Delete Location',
+            'Are you sure you want to delete this location?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Delete',
+                    onPress: () => deleteLocation(id)
+                }
+            ]
+        )
+    }
+    const deleteLocation = async (id) => {
+        try {
+            const res = await axios.post("http://192.168.2.195:5000/deletelocation", { _id: id });
+            if (res?.status === 200) {
+                alert(res?.data?.message)
+                setFetchlocation([]);
+                fetchLocation();
+            }
+            else {
+                alert(`${res?.data?.data} + ${res?.data?.message}`)
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+    }
+
     return (
         <ScrollView>
 
-            <View className="flex gap-6 justify-center items-center ">
-                {
-                    inSameArea ?
-                        <Text className="text-xl font-bold text-red-800">Yore into same area</Text> : <></>
-                }
+            <View className="flex my-4 justify-center items-center ">
+                <Button
+                    title="Press to schedule a notification"
+                    onPress={sendNoti}
+                />
+
                 <View className="flex-row pt-16 items-center self-stretch justify-center gap-3 mb-4">
                     <Text className="text-2xl font-bold text-gray-800">Add Locations</Text>
                 </View>
@@ -162,13 +222,19 @@ const Home = () => {
                     }
                 </View>
 
-                <View className=' max-h-[45vh] w-full flex-col justify-center items-center bg-zinc-300'>
+                <View className='h-[55vh] w-full flex-col justify-center items-center bg-zinc-300'>
                     <Text className="text-2xl font-bold text-gray-800 pt-7">Location List</Text>
                     <ScrollView className='w-full mt-10'>
                         <View className="flex-col items-center self-stretch justify-center gap-3 mb-4 px-1">
                             {Object.keys(locationList).length > 0 ?
                                 Object.keys(locationList).map((val, index) => {
-                                    return <Text key={index} className={`text-base text-justify p-2 font-bold text-gray-800 border-b border-dashed `}>{locationList[val].address}</Text>
+                                    return <View key={index} className="flex-row w-[85%] items-center justify-between p-2 border-b border-dashed">
+                                        <Text key={index} className="text-base w-[85%] text-justify self-start font-bold text-gray-800">
+                                            {locationList[val].address}
+                                        </Text>
+                                        <TouchableOpacity onPress={() => confirmShow(locationList[val]._id)}><AntDesign name="delete" size={20} color="red" /></TouchableOpacity>
+                                    </View>
+
                                 })
                                 : <Text>No Data Available</Text>
                             }

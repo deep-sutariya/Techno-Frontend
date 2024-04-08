@@ -1,13 +1,18 @@
-export default checkLocation = (userLocations,locationList) => {
-    for (const item1 of userLocations) {
-        for (const item2 of locationList) {
-            if (
-                item1.address === item2.address ||
-                (item1.location.lat === item2.location.lat && item1.location.lng === item2.location.lng)
-            ) {
-                return true;
+const checkLocation = (loc, locationList) => {
+    
+    if (loc?.lat && loc?.lon) {
+        const threshold = 0.005; //Arround 500 mt
+
+        for (const item1 of locationList) {
+            const latDiff = Math.abs(item1.location.lat - loc.lat);
+            const lngDiff = Math.abs(item1.location.lng - loc.lon);
+
+            if (latDiff <= threshold && lngDiff <= threshold) {
+                return {status:true,data:item1};
             }
         }
     }
-    return false
-}
+    return {status:false, data: {}};
+};
+
+export default checkLocation;
