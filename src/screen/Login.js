@@ -57,7 +57,7 @@ const Login = ({ navigation, setUserData }) => {
             </View>
 
 
-            <TouchableOpacity className=" bg-slate-500 p-3 rounded-lg flex-row gap-x-2 items-center justify-center w-4/5" onPress={handleLogin} >
+            <TouchableOpacity className=" bg-hover p-3 rounded-lg flex-row gap-x-2 items-center justify-center w-4/5" onPress={handleLogin} >
                 <Text className="text-white text-lg font-bold">
                     Login
                 </Text>

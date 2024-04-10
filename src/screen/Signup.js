@@ -99,7 +99,7 @@ const Signup = () => {
                     : <></>
             }
 
-            <TouchableOpacity className=" bg-slate-500 p-3 rounded-lg items-center w-4/5" onPress={handleSubmit}>
+            <TouchableOpacity className=" bg-hover p-3 rounded-lg items-center w-4/5" onPress={handleSubmit}>
                 <Text className="text-white text-lg font-bold">
                     Sign Up <Entypo name="login" size={20} color="white" />{" "}
                 </Text>

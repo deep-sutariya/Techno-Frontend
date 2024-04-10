@@ -21,7 +21,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
 
         try {
             const task = { title: taskTitle };
-            const response = await axios.post(`http://192.168.2.197:5000/addtask`, { id: location._id, task });
+            const response = await axios.post(`${process.env['API_BASE_URL']}/addtask`, { id: location._id, task });
             // console.log(response?.data);
             setTaskTitle('');
             setShowForm(false);
@@ -35,7 +35,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
         try {
             const task = { title: taskTitle };
             console.log(task);
-            const response = await axios.post(`http://192.168.2.197:5000/updatetask`, { id: location._id, taskId: taskIdToEdit, updatedTask: task });
+            const response = await axios.post(`${process.env['API_BASE_URL']}/updatetask`, { id: location._id, taskId: taskIdToEdit, updatedTask: task });
             // console.log(response?.data);
             setTaskTitle('');
             setShowForm(false);
@@ -48,7 +48,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
 
     const handleDeleteTask = async (taskId) => {
         try {
-            const response = await axios.post(`http://192.168.2.197:5000/deletetask`, { id: location._id, taskId });
+            const response = await axios.post(`${process.env['API_BASE_URL']}/deletetask`, { id: location._id, taskId });
             // console.log(response?.data);
             setTaskTitle('');
             setShowForm(false);
@@ -82,8 +82,8 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
                                     />
                                     <TouchableOpacity
                                         onPress={() => handleEditTask(task._id)}
-                                        className="bg-slate-300 text-white font-semibold rounded-md py-2 px-3">
-                                        <AntDesign name="check" size={16} color="black" />
+                                        className="bg-hover text-white font-semibold rounded-md py-2 px-3">
+                                        <AntDesign name="check" size={16} color="white" />
                                     </TouchableOpacity>
                                 </View>
                                 :
@@ -96,7 +96,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
                                         <FontAwesome6 name="edit" size={16} color="black" />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => handleDeleteTask(task._id)}>
-                                        <AntDesign name="delete" size={16} color="red" />
+                                        <AntDesign name="delete" size={16} color="#FF474C" />
                                     </TouchableOpacity>
                                 </View>
                                 : <></>
@@ -117,13 +117,13 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
                             />
                             <TouchableOpacity
                                 onPress={handleAddTask}
-                                className="bg-slate-300 text-white font-semibold rounded-md py-2 px-3">
-                                <AntDesign name="check" size={16} color="black" />
+                                className="bg-hover text-white font-semibold rounded-md py-2 px-3">
+                                <AntDesign name="check" size={16} color="white" />
                             </TouchableOpacity>
                         </View>
                         :
-                        <TouchableOpacity onPress={() => setShowForm(true)} className="bg-slate-300 text-white font-semibold rounded-md py-2 px-3 ">
-                            <FontAwesome6 name="add" size={16} color="black" />
+                        <TouchableOpacity onPress={() => setShowForm(true)} className="bg-hover text-white font-semibold rounded-md py-2 px-3 ">
+                            <FontAwesome6 name="add" size={16} color="white" />
                         </TouchableOpacity>
                 }
 

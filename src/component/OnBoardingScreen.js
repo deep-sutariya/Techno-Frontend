@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { View, Text, TouchableOpacity, Animated, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -26,41 +26,47 @@ const OnBoardingScreen = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             navigation.navigate('Drawer');
-        }, 2000);
+        }, 1500);
 
         return () => clearTimeout(timeout);
     }, []);
 
     return (
-        <View className="flex-1 justify-center items-center bg-white gap-y-10">
-            <Animated.Text
-                style={{
-                    fontSize: 40,
-                    color: "red",
-                    marginBottom: 5,
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    letterSpacing: 1,
-                    transform: [{ scale: scaleAnim }]
-                }}
-            >
-                yaDoo
-            </Animated.Text>
-            <Animated.Text
-                style={[
-                    "text-gray-800 text-lg font-semibold mb-10",
-                    { opacity: opacityAnim }
-                ]}
-            >
-                Welcome to our App ❤️!
-            </Animated.Text>
-            <TouchableOpacity
-                onPress={() => navigation.navigate("Drawer")}
-                className="bg-darkslateblue px-6 py-3 rounded-full flex flex-row items-center"
-            >
-                <Text className="text-white text-lg font-semibold mr-2">Visit</Text>
-                <Ionicons name="enter-outline" size={24} color="white" />
-            </TouchableOpacity>
+        <View className="flex-1 justify-center items-center bg-white">
+            <View className="flex-column gap-y-14 justify-center items-center h-24 mt-10 mb-5  border-b-2 border-slate-500">
+                <Animated.View
+                    style={{
+                        width: 250,
+                        height: 80,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        overflow: 'hidden',
+                        transform: [{ scale: scaleAnim }]
+                    }}
+                >
+                    <Image
+                        style={{ width: 250, height: 80 }}
+                        source={require('../../assets/logo.png')}
+                    />
+                </Animated.View>
+                <Animated.Text
+                    style={[
+                        "text-2xl font-semibold mb-10 text-hover",
+                        { opacity: opacityAnim }
+                    ]}
+                >
+                    Task Management Based on Your Location!
+                </Animated.Text>
+            </View>
+            <View className="mt-52">
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Drawer")}
+                    className=" bg-hover px-5 py-2 rounded-lg flex flex-row items-center"
+                >
+                    <Text className="text-white text-lg font-semibold mr-2">Visit</Text>
+                    <Ionicons name="enter-outline" size={24} color="white" />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

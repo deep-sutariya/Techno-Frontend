@@ -10,21 +10,21 @@ import getLocation from '../utils/getLocation';
 import { registerForPushNotificationsAsync, setupNotifications } from '../utils/sendNotification';
 import LocationCard from '../component/LocationListCard';
 import checkExpireNotification from '../utils/checkExpireNotification';
+import LoadingSpinner from '../component/LoadingSpinner';
 
 // import BackgroundTimer from 'react-native-background-timer';
 
 setupNotifications();
 
 const Home = () => {
-    const { inSameArea, setInSameArea, locationList, setLocationList } = useContext(StatusDetail);
+    const { inSameArea, setInSameArea, locationList, setLocationList, loc, setLoc } = useContext(StatusDetail);
 
     const [loading, setLoading] = useState(false);
+    const [loadingList, setLoadingList] = useState(false);
     const [flag, setFlag] = useState(false);
 
     const [location, setLocation] = useState("");
     const [fetchlocation, setFetchlocation] = useState([]);
-
-    const [loc, setLoc] = useState(null);
 
     const [expoPushToken, setExpoPushToken] = useState('');
 
@@ -53,7 +53,7 @@ const Home = () => {
 
     const sendNoti = async (title, tasks, id) => {
         try {
-            const ack = await axios.post("http://192.168.2.197:5000/sendnotification", { title, tasks, id });
+            const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, { title, tasks, id, token:expoPushToken });
             if (ack?.data?.data?.data?.status == "ok") {
                 fetchLocation();
             };
@@ -61,12 +61,14 @@ const Home = () => {
             console.log(e);
         }
     }
-
+    
     useEffect(() => {
         if (inSameArea?.data?._id != undefined && inSameArea?.status && loc != null) {
             if (checkExpireNotification(inSameArea?.data?.lastNotificationSentAt)) {
                 let tasks = inSameArea?.data?.tasks.map(task => task.title).join('\n');
-                sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
+                if (tasks.length > 0 && expoPushToken.length>0) {
+                    sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
+                }
             }
         }
     }, [inSameArea, loc])
@@ -92,8 +94,10 @@ const Home = () => {
 
     const fetchLocation = async () => {
         try {
-            const res = await axios.post("http://192.168.2.197:5000/getlocationlist");
+            setLoadingList(true);
+            const res = await axios.post(`${process.env['API_BASE_URL']}/getlocationlist`);
             setLocationList(res?.data?.data);
+            setLoadingList(false);
         } catch (e) {
             console.log(e);
         }
@@ -112,7 +116,7 @@ const Home = () => {
             try {
                 setFetchlocation([])
                 setLoading(true);
-                const data = await axios.post(`http://192.168.2.197:5000/fetchlocation`, { location });
+                const data = await axios.post(`${process.env['API_BASE_URL']}/fetchlocation`, { location });
                 const info = Object.keys(data?.data?.results).map((val) => {
                     return data?.data?.results[val];
                 });
@@ -126,7 +130,7 @@ const Home = () => {
 
     const handleAdd = async () => {
         try {
-            const res = await axios.post("http://192.168.2.197:5000/addlocation", fetchlocation);
+            const res = await axios.post(`${process.env['API_BASE_URL']}/addlocation`, fetchlocation);
             if (res?.status === 500) {
                 alert(res?.data?.message)
             }
@@ -160,7 +164,7 @@ const Home = () => {
     }
     const deleteLocation = async (id) => {
         try {
-            const res = await axios.post("http://192.168.2.197:5000/deletelocation", { _id: id });
+            const res = await axios.post(`${process.env['API_BASE_URL']}/deletelocation`, { _id: id });
             if (res?.status === 200) {
                 alert(res?.data?.message)
                 setFetchlocation([]);
@@ -179,7 +183,7 @@ const Home = () => {
     return (
         <ScrollView>
 
-            <View className="flex my-4 justify-center items-center ">
+            <View className="flex mt-4 justify-center items-center ">
 
                 <View className="flex-row pt-16 items-center self-stretch justify-center gap-3 mb-4">
                     <Text className="text-2xl font-bold text-gray-800">Add Locations</Text>
@@ -219,27 +223,29 @@ const Home = () => {
 
                     {
                         flag ?
-                            <TouchableOpacity className="bg-dark p-3 rounded-lg items-center bg-slate-500" onPress={handleAdd}>
+                            <TouchableOpacity className="bg-dark p-3 rounded-lg items-center bg-hover" onPress={handleAdd}>
                                 <Text className="text-white text-lg font-bold">
                                     {
-                                        loading ? "Loading..." : "Add"
+                                        loading ? <LoadingSpinner color="#fff" size="small" /> : "Add"
                                     }
                                 </Text>
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity className="bg-dark p-3 rounded-lg items-center bg-slate-500" onPress={handleFetch}>
+                            <TouchableOpacity className="bg-dark p-3 rounded-lg items-center bg-hover" onPress={handleFetch}>
                                 <Text className="text-white text-lg font-bold">
                                     {
-                                        loading ? "Loading..." : "Fetch"
+                                        loading ? <LoadingSpinner color="#fff" size="small" /> : "Fetch"
                                     }
                                 </Text>
                             </TouchableOpacity>
                     }
                 </View>
 
-                <View className=' w-full flex-col justify-center items-center bg-zinc-300'>
+                <View className=' w-full flex-1 flex-col justify-center items-center bg-zinc-300 min-h-[58vh]'>
                     <Text className="text-2xl font-bold text-gray-800 pt-7">Location List</Text>
                     <ScrollView className='w-full mt-10'>
+                        {/* {
+                            loadingList ? <LoadingSpinner color="#7077A1" /> : */}
                         <View className="flex-col items-center w-full justify-center">
                             {Object.keys(locationList).length > 0 ?
                                 Object.keys(locationList).map((val, index) => {
@@ -255,6 +261,7 @@ const Home = () => {
                                 : <Text>No Data Available</Text>
                             }
                         </View>
+                        {/* } */}
                     </ScrollView>
                 </View>
 

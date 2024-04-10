@@ -19,7 +19,7 @@ const AppNavigator = () => {
         options={{
           title: 'Locations',
           headerStyle: {
-            backgroundColor: '#64748B',
+            backgroundColor: '#424769',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -30,11 +30,11 @@ const AppNavigator = () => {
         {(props) => <Home {...props} />}
       </Stack.Screen>
 
-      <Stack.Screen name="Notification"
+      {/* <Stack.Screen name="Notification"
         options={{
           title: 'Status',
           headerStyle: {
-            backgroundColor: '#64748B',
+            backgroundColor: '#424769',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -43,13 +43,13 @@ const AppNavigator = () => {
           },
         }}>
         {(props) => <Notificaton {...props} />}
-      </Stack.Screen>
+      </Stack.Screen> */}
 
       <Stack.Screen name="Login"
         options={{
           title: 'Login',
           headerStyle: {
-            backgroundColor: '#64748B',
+            backgroundColor: '#424769',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -64,7 +64,7 @@ const AppNavigator = () => {
         options={{
           title: 'Signup',
           headerStyle: {
-            backgroundColor: '#64748B',
+            backgroundColor: '#424769',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {

@@ -11,7 +11,6 @@ const getLocation = async () => {
     }
     let location = await Location.getCurrentPositionAsync({});
     currentLocation = {lat:location?.coords?.latitude, lon:location?.coords?.longitude};
-    
     return currentLocation;
 };
 

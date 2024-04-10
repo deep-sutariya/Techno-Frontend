@@ -21,7 +21,7 @@ const DrawerNavigator = () => {
 
   return (
     <Drawer.Navigator
-      initialRouteName="Status"
+      initialRouteName="Locations"
       drawerContent={(props) => (
         <CustomDrawer
           {...props}
@@ -29,15 +29,15 @@ const DrawerNavigator = () => {
       )}
       screenOptions={{
         drawerAllowFontScaling: true,
-        drawerActiveBackgroundColor: "#64748B",
+        drawerActiveBackgroundColor: "#7077A1",
         drawerActiveTintColor: "#fff",
         headerStyle: {
-          backgroundColor: "#64748B",
+          backgroundColor: "#424769",
         },
-        headerTitleStyle: {color: 'white', marginLeft:10},
-        drawerLabelStyle:{marginLeft: -15, fontSize:15},
+        headerTitleStyle: { color: 'white', marginLeft: 10 },
+        drawerLabelStyle: { marginLeft: -15, fontSize: 15 },
         headerLeft: () => (
-          <TouchableOpacity className=" ml-5"  onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+          <TouchableOpacity className=" ml-5" onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Feather name="menu" size={24} color="white" />
           </TouchableOpacity>
         ),
@@ -45,13 +45,6 @@ const DrawerNavigator = () => {
 
     >
 
-      <Drawer.Screen name="Status"
-        options={{
-          drawerIcon: () => <Zocial name="statusnet" size={20} color="black" /> 
-        }}
-      >
-        {(props) => <Notification navigation={navigation} />}
-      </Drawer.Screen>
 
       <Drawer.Screen name="Locations"
         options={{
@@ -60,6 +53,14 @@ const DrawerNavigator = () => {
       >
         {(props) => <Home navigation={navigation} />}
       </Drawer.Screen>
+
+      {/* <Drawer.Screen name="Status"
+        options={{
+          drawerIcon: () => <Zocial name="statusnet" size={20} color="black" />
+        }}
+      >
+        {(props) => <Notification navigation={navigation} />}
+      </Drawer.Screen> */}
 
       <Drawer.Screen name="Login"
         options={{
