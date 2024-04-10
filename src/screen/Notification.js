@@ -52,7 +52,7 @@ const Notification = () => {
                             </View>
                         </View>
                         :
-                        <Text className="text-xl font-bold text-red-800">Yore Not at any location </Text>
+                        <Text className="text-lg font-bold text-red-800">Yore Not at any location {JSON.stringify(loc)}</Text>
                 }
             </View>
             <TouchableOpacity className=" bg-slate-500 w-2/3 rounded-lg mx-auto py-2 px-1" onPress={() => navigation.navigate('Home')}>

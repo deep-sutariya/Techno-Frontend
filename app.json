@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Proto-1",
-    "slug": "yadoo",
+    "slug": "Proto-1",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.deep_1234.Proto1",
+      "googleServicesFile": "./google-services.json",
+      "package": "com.deep.yadoo",
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
@@ -33,7 +34,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "808e1f07-0b7f-4c99-8981-3bce4ac4fe08"
+        "projectId": "04cadca2-0406-4d36-9ec9-e5446faa58f2"
       }
     },
     "plugins": [

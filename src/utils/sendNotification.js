@@ -13,7 +13,7 @@ export const setupNotifications = async () => {
   });
 };
 
-export const registerForPushNotificationsAsync = async () => {
+export const registerForPushNotificationsAsync = async() => {
   let token;
 
   if (Platform.OS === 'android') {
@@ -36,11 +36,11 @@ export const registerForPushNotificationsAsync = async () => {
       alert('Failed to get push token for push notification!');
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync({ projectId: '808e1f07-0b7f-4c99-8981-3bce4ac4fe08' })).data;
-    console.log(token);
+    token = (await Notifications.getExpoPushTokenAsync({ projectId: '04cadca2-0406-4d36-9ec9-e5446faa58f2' })).data;
+    // console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
   }
 
   return token;
-};
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "337112174024",
+    "project_id": "yadoo-6abc0",
+    "storage_bucket": "yadoo-6abc0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337112174024:android:c8e3296f2a4e579730c4fd",
+        "android_client_info": {
+          "package_name": "com.deep.yadoo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVNw5o1cDVAjqc631leSGXse9ofEl0Z3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

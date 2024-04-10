@@ -5,13 +5,15 @@ import Notificaton from '../screen/Notification';
 import DrawerNavigator from './DrawerNavigator';
 import Login from '../screen/Login';
 import Signup from '../screen/Signup';
+import OnBoardingScreen from '../component/OnBoardingScreen';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
 
   return (
-    <Stack.Navigator initialRouteName="Drawer">
+    <Stack.Navigator initialRouteName="onBoarding">
+      <Stack.Screen name="onBoarding" component={OnBoardingScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="Home"
         options={{

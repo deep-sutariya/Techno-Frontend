@@ -4,45 +4,19 @@ import axios from 'axios';
 
 import checkLocation from '../utils/checkLocation';
 
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StatusDetail } from '../contex/statusContex';
 import getLocation from '../utils/getLocation';
 
 import { registerForPushNotificationsAsync, setupNotifications } from '../utils/sendNotification';
-import isNotificationExpired from '../utils/checkNotiExpire';
+import LocationCard from '../component/LocationListCard';
+import checkExpireNotification from '../utils/checkExpireNotification';
 
+// import BackgroundTimer from 'react-native-background-timer';
+
+setupNotifications();
 
 const Home = () => {
     const { inSameArea, setInSameArea, locationList, setLocationList } = useContext(StatusDetail);
-
-    const [expoPushToken, setExpoPushToken] = useState('');
-
-    useEffect(() => {
-        registerForPushNotificationsAsync().then(token => {
-            setExpoPushToken(token)
-        });
-        fetchLocation();
-    }, []);
-
-    useEffect(()=>{
-        console.log(expoPushToken);
-    },[expoPushToken])
-
-    const sendNoti = async (title,body,id) => {
-        const ack = await axios.post("http://192.168.2.195:5000/sendnotification", {title,body,id});
-    }
-
-    useEffect(() => {
-        console.log(inSameArea);
-        if (inSameArea?.data?._id!=undefined && inSameArea?.status && loc!=null) {
-            console.log("Id-->",inSameArea?.data?._id);
-            sendNoti(inSameArea?.data?.address,"Task1, Task2, Task3",inSameArea?.data?._id);
-        }
-    }, [inSameArea])
-
 
     const [loading, setLoading] = useState(false);
     const [flag, setFlag] = useState(false);
@@ -52,17 +26,65 @@ const Home = () => {
 
     const [loc, setLoc] = useState(null);
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            getLocation().then((newLoc)=>setLoc(newLoc))
-        }, 5000);
-        
-        return () => clearInterval(intervalId);
-    },[]);
+    const [expoPushToken, setExpoPushToken] = useState('');
 
     useEffect(() => {
-        console.log("Location:", loc);
-    }, [loc]);
+        registerForPushNotificationsAsync().then(token => {
+            setExpoPushToken(token)
+        });
+        fetchLocation();
+        const intervalId = setInterval(() => {
+            getLocation().then((newLoc) => setLoc(newLoc))
+        }, 10000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    // useEffect(() => {
+    //     BackgroundTimer.runBackgroundTimer(() => {
+    //         console.log("BG Process");
+    //         getLocation().then((newLoc) => setLoc(newLoc));
+    //     }, 10000); 
+
+    //     return () => {
+    //         BackgroundTimer.stopBackgroundTimer();
+    //     };
+    // }, []);
+
+    const sendNoti = async (title, tasks, id) => {
+        try {
+            const ack = await axios.post("http://192.168.2.197:5000/sendnotification", { title, tasks, id });
+            if (ack?.data?.data?.data?.status == "ok") {
+                fetchLocation();
+            };
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        if (inSameArea?.data?._id != undefined && inSameArea?.status && loc != null) {
+            if (checkExpireNotification(inSameArea?.data?.lastNotificationSentAt)) {
+                let tasks = inSameArea?.data?.tasks.map(task => task.title).join('\n');
+                sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
+            }
+        }
+    }, [inSameArea, loc])
+
+    // useEffect(() => {
+    //     BackgroundTimer.runBackgroundTimer(() => {
+    //         if (inSameArea?.data?._id != undefined && inSameArea?.status && loc != null) {
+    //             if (checkExpireNotification(inSameArea?.data?.lastNotificationSentAt)) {
+    //                 let tasks = inSameArea?.data?.tasks.map(task => task.title).join('\n');
+    //                 sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
+    //             }
+    //         }
+    //     }, 60000);
+
+    //     return () => {
+    //         BackgroundTimer.stopBackgroundTimer();
+    //     };
+    // }, [inSameArea, loc]);
 
 
 
@@ -70,20 +92,16 @@ const Home = () => {
 
     const fetchLocation = async () => {
         try {
-            const res = await axios.post("http://192.168.2.195:5000/getlocationlist");
+            const res = await axios.post("http://192.168.2.197:5000/getlocationlist");
             setLocationList(res?.data?.data);
         } catch (e) {
             console.log(e);
         }
     };
 
-    // useEffect(() => {
-    //     fetchLocation();
-    // }, []);
-
     useEffect(() => {
         let data = checkLocation(loc, locationList)
-        if(JSON.stringify(inSameArea) !== JSON.stringify(data)){
+        if (JSON.stringify(inSameArea) !== JSON.stringify(data)) {
             setInSameArea(data);
         }
     }, [loc, locationList]);
@@ -94,7 +112,7 @@ const Home = () => {
             try {
                 setFetchlocation([])
                 setLoading(true);
-                const data = await axios.post(`http://192.168.2.195:5000/fetchlocation`, { location });
+                const data = await axios.post(`http://192.168.2.197:5000/fetchlocation`, { location });
                 const info = Object.keys(data?.data?.results).map((val) => {
                     return data?.data?.results[val];
                 });
@@ -108,7 +126,7 @@ const Home = () => {
 
     const handleAdd = async () => {
         try {
-            const res = await axios.post("http://192.168.2.195:5000/addlocation", fetchlocation);
+            const res = await axios.post("http://192.168.2.197:5000/addlocation", fetchlocation);
             if (res?.status === 500) {
                 alert(res?.data?.message)
             }
@@ -142,7 +160,7 @@ const Home = () => {
     }
     const deleteLocation = async (id) => {
         try {
-            const res = await axios.post("http://192.168.2.195:5000/deletelocation", { _id: id });
+            const res = await axios.post("http://192.168.2.197:5000/deletelocation", { _id: id });
             if (res?.status === 200) {
                 alert(res?.data?.message)
                 setFetchlocation([]);
@@ -157,14 +175,11 @@ const Home = () => {
 
     }
 
+
     return (
         <ScrollView>
 
             <View className="flex my-4 justify-center items-center ">
-                <Button
-                    title="Press to schedule a notification"
-                    onPress={sendNoti}
-                />
 
                 <View className="flex-row pt-16 items-center self-stretch justify-center gap-3 mb-4">
                     <Text className="text-2xl font-bold text-gray-800">Add Locations</Text>
@@ -172,7 +187,7 @@ const Home = () => {
 
                 <View className="w-4/5 pb-10">
                     <TextInput
-                        className="p-3 min-w-full bg-offwhite rounded-lg mb-4 border border-black text-xl"
+                        className="p-3 min-w-full bg-offwhite rounded-lg  border border-black text-xl"
                         placeholder="location"
                         id='location'
                         value={location}
@@ -222,19 +237,20 @@ const Home = () => {
                     }
                 </View>
 
-                <View className='h-[55vh] w-full flex-col justify-center items-center bg-zinc-300'>
+                <View className=' w-full flex-col justify-center items-center bg-zinc-300'>
                     <Text className="text-2xl font-bold text-gray-800 pt-7">Location List</Text>
                     <ScrollView className='w-full mt-10'>
-                        <View className="flex-col items-center self-stretch justify-center gap-3 mb-4 px-1">
+                        <View className="flex-col items-center w-full justify-center">
                             {Object.keys(locationList).length > 0 ?
                                 Object.keys(locationList).map((val, index) => {
-                                    return <View key={index} className="flex-row w-[85%] items-center justify-between p-2 border-b border-dashed">
-                                        <Text key={index} className="text-base w-[85%] text-justify self-start font-bold text-gray-800">
-                                            {locationList[val].address}
-                                        </Text>
-                                        <TouchableOpacity onPress={() => confirmShow(locationList[val]._id)}><AntDesign name="delete" size={20} color="red" /></TouchableOpacity>
-                                    </View>
+                                    return <LocationCard key={index} location={locationList[val]} confirmShow={confirmShow} fetchLocation={fetchLocation} />
 
+                                    // return <View key={index} className="flex-row w-[85%] items-center justify-between p-2 border-b border-dashed">
+                                    //     <Text key={index} className="text-base w-[85%] text-justify self-start font-bold text-gray-800">
+                                    //         {locationList[val].address}
+                                    //     </Text>
+                                    //     
+                                    // </View>
                                 })
                                 : <Text>No Data Available</Text>
                             }
