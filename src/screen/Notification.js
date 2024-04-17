@@ -35,23 +35,29 @@ const Notification = () => {
 
     return (
         <View className='w-full flex-col justify-center gap-y-28'>
-            <View className="flex h-[50%] justify-center items-center ">
+            <View className="flex h-[50%] justify-center items-center">
                 {
                     inSameArea?.status ?
                         <View className="flex-col justify-center items-center gap-y-16 mt-10">
-                            <Text className="text-xl font-bold text-slate-500">Yore into same area</Text>
+                            <Text className="text-xl font-bold text-slate-500 px-5">At area which is in the list</Text>
                             <View className="flex-col items-center gap-y-3 max-w-[85%]">
                                 <Text className="text-base text-justify font-bold text-slate-500">Address:</Text>
                                 <Text className="text-sm text-justify font-bold text-slate-500">{inSameArea?.data?.address}</Text>
                             </View>
                         </View>
                         :
-                        <Text className="text-lg px-3 font-bold text-slate-500">Yore Not at any location from Location List {JSON.stringify(loc)}</Text>
+                        <View className=" flex justify-center items-center mt-16">
+                            <Text className="text-lg px-3 font-bold text-slate-500">Not at any location from Location List</Text>
+                            <Text className="text-lg px-3 font-bold text-slate-500 mt-20">Latitute: {JSON.stringify(loc?.lat)}</Text>
+                            <Text className="text-lg px-3 font-bold text-slate-500">Longitute: {JSON.stringify(loc?.lon)}</Text>
+                        </View>
                 }
             </View>
-            <TouchableOpacity className=" bg-[#7077A1] w-2/3 rounded-lg mx-auto py-2 px-1" onPress={() => navigation.navigate('Home')}>
-                <Text className=" font-bold text-lg text-white mx-auto">Locations</Text>
-            </TouchableOpacity>
+            <View>
+                <TouchableOpacity className=" bg-[#7077A1] w-2/3 rounded-lg mx-auto py-2 px-1" onPress={() => navigation.navigate('Home')}>
+                    <Text className=" font-bold text-lg text-white mx-auto">Locations</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

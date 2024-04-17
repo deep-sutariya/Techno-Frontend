@@ -9,6 +9,11 @@ const getLocation = async () => {
     if (status !== 'granted') {
         return;
     }
+    let data = await Location.requestBackgroundPermissionsAsync();
+    if (data.status !== 'granted') {
+        return;
+    }
+
     let location = await Location.getCurrentPositionAsync({});
     currentLocation = {lat:location?.coords?.latitude, lon:location?.coords?.longitude};
     return currentLocation;

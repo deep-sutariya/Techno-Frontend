@@ -59,7 +59,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
     };
 
     return (
-        <View className="bg-gray-100 rounded-lg p-4 m-4 max-w-[90%]">
+        <View className="bg-gray-100 rounded-lg p-4 m-3 max-w-[90%]">
             <View className="flex-row items-start">
             <View className="flex-col w-[90%]">
                 <Text className="font-bold text-sm mb-2 text-justify">{location.address}</Text>

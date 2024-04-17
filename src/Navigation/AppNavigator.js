@@ -30,7 +30,7 @@ const AppNavigator = () => {
         {(props) => <Home {...props} />}
       </Stack.Screen>
 
-      {/* <Stack.Screen name="Notification"
+      <Stack.Screen name="Notification"
         options={{
           title: 'Status',
           headerStyle: {
@@ -43,7 +43,7 @@ const AppNavigator = () => {
           },
         }}>
         {(props) => <Notificaton {...props} />}
-      </Stack.Screen> */}
+      </Stack.Screen>
 
       <Stack.Screen name="Login"
         options={{

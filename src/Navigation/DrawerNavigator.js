@@ -54,13 +54,13 @@ const DrawerNavigator = () => {
         {(props) => <Home navigation={navigation} />}
       </Drawer.Screen>
 
-      {/* <Drawer.Screen name="Status"
+      <Drawer.Screen name="Status"
         options={{
           drawerIcon: () => <Zocial name="statusnet" size={20} color="black" />
         }}
       >
         {(props) => <Notification navigation={navigation} />}
-      </Drawer.Screen> */}
+      </Drawer.Screen>
 
       <Drawer.Screen name="Login"
         options={{
