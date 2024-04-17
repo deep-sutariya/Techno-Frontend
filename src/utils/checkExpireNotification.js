@@ -3,7 +3,9 @@ const checkExpireNotification = (lastNotificationSentAt) => {
     const fifteenMinutesAgo = new Date(currentTime - 10 * 60 * 1000).getTime();
 
     const lastNotificationTimestamp = new Date(lastNotificationSentAt).getTime();
-    return !lastNotificationSentAt || lastNotificationTimestamp > fifteenMinutesAgo;
+    
+    console.log("-->" + (lastNotificationTimestamp + ">" + fifteenMinutesAgo) + "<--");
+    return lastNotificationSentAt==null || lastNotificationTimestamp < fifteenMinutesAgo;
 };
 
 export default checkExpireNotification;

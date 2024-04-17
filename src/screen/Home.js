@@ -103,8 +103,8 @@ const Home = () => {
             return;
         }
 
-        if (checkExpireNotification(inSameArea?.data?.lastNotificationSentAt)) {
-            // console.log("Notification is not expired. Skipping notification.");
+        if (!checkExpireNotification(inSameArea?.data?.lastNotificationSentAt)) {
+            console.log("Notification is not expired. Skipping notification.");
             return;
         }
 
@@ -116,8 +116,8 @@ const Home = () => {
         };
 
         try {
-            const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, notificationData);
-            // const ack = await axios.post(`http://192.168.2.197:5000/sendnotification`, notificationData);
+            // const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, notificationData);
+            const ack = await axios.post(`http://192.168.2.101:5000/sendnotification`, notificationData);
             if (ack?.data?.data?.status === "ok") {
                 const currentTime = new Date().toISOString();
                 console.log("Time-->", currentTime);
