@@ -116,8 +116,8 @@ const Home = () => {
         };
 
         try {
-            // const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, notificationData);
-            const ack = await axios.post(`http://192.168.2.101:5000/sendnotification`, notificationData);
+            const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, notificationData);
+            // const ack = await axios.post(`http://192.168.2.103:5000/sendnotification`, notificationData);
             if (ack?.data?.data?.status === "ok") {
                 const currentTime = new Date().toISOString();
                 console.log("Time-->", currentTime);
@@ -168,12 +168,13 @@ const Home = () => {
     }, [loc, locationList]);
 
     useEffect(() => {
-        if (location.length < 3) setFetchlocation([])
+        if (location.length < 3) setFetchlocation([]);
+        handleFetch()
     }, [location])
 
 
     const handleFetch = async () => {
-        if (location.length > 1) {
+        if (location.length > 3) {
             try {
                 setFetchlocation([])
                 setLoading(true);
@@ -244,10 +245,10 @@ const Home = () => {
     return (
         // <ScrollView>
 
-        <View className="flex-col mt-4 justify-center items-center h-full ">
+        <View className="flex-col mt-3 justify-center items-center h-full ">
 
-            <View className="w-4/5 pb-10">
-                <View className="flex-row pt-6 items-center self-stretch justify-center gap-3 mb-4">
+            <View className="w-4/5 pb-8">
+                <View className="flex-row pt-4 items-center self-stretch justify-center gap-3 mb-4">
                     <Text className="text-xl font-bold text-gray-800">Add Locations</Text>
                 </View>
                 <TextInput
