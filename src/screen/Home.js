@@ -97,7 +97,7 @@ const Home = () => {
 
 
     const sendNoti = async (title, tasks, id) => {
-        console.log("Notification Funs");
+        // console.log("Notification Funs");
         if (!title || !tasks || !id || !expoPushToken) {
             console.error("Required parameters are missing.");
             return;
@@ -142,7 +142,7 @@ const Home = () => {
                 sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
             }
         }
-    }, [inSameArea, loc])
+    }, [inSameArea, loc, expoPushToken])
 
 
 
