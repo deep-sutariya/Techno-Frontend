@@ -13,6 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Login from "../screen/Login";
 import Signup from "../screen/Signup";
+import FileShare from '../screen/FileShare';
 
 const Drawer = createDrawerNavigator();
 
@@ -61,6 +62,14 @@ const DrawerNavigator = () => {
       >
         {(props) => <Notification navigation={navigation} />}
       </Drawer.Screen>
+
+      {/* <Drawer.Screen name="FileShare"
+        options={{
+          drawerIcon: () => <Zocial name="statusnet" size={20} color="black" />
+        }}
+      >
+        {(props) => <FileShare navigation={navigation} />}
+      </Drawer.Screen> */}
 
       <Drawer.Screen name="Login"
         options={{

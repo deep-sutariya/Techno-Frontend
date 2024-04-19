@@ -45,6 +45,13 @@
           "locationAlwaysAndWhenInUsePermission": "Allow to use your location.",
           "isAndroidBackgroundLocationEnabled": true
         }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Yadoo to access your photos.",
+          "savePhotosPermission": "Allow Yadoo to save photos."
+        }
       ]
     ],
     "owner": "deep_1234"

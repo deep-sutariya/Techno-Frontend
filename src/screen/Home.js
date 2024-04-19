@@ -30,11 +30,6 @@ const requestPermissions = async () => {
             await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
                 accuracy: Location.Accuracy.Balanced,
                 timeInterval: 10000,
-                foregroundService: {
-                    killServiceOnDestroy: false,
-                    notificationTitle: "Fetching In Background",
-                    notificationBody: "You can turn off by open application",
-                },
             });
         }
     }
@@ -97,7 +92,7 @@ const Home = () => {
 
 
     const sendNoti = async (title, tasks, id) => {
-        // console.log("Notification Funs");
+        console.log("Notification Funs");
         if (!title || !tasks || !id || !expoPushToken) {
             console.error("Required parameters are missing.");
             return;
@@ -119,7 +114,7 @@ const Home = () => {
             const ack = await axios.post(`${process.env['API_BASE_URL']}/sendnotification`, notificationData);
             // const ack = await axios.post(`http://192.168.2.103:5000/sendnotification`, notificationData);
             if (ack?.data?.data?.status === "ok") {
-                const currentTime = new Date().toISOString();
+                const currentTime = new Date().getTime();
                 console.log("Time-->", currentTime);
                 setInSameArea(prevState => ({
                     ...prevState,

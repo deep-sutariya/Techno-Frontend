@@ -2,6 +2,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screen/Home';
 import Notificaton from '../screen/Notification';
+import FileShare from '../screen/FileShare';
 import DrawerNavigator from './DrawerNavigator';
 import Login from '../screen/Login';
 import Signup from '../screen/Signup';
@@ -43,6 +44,21 @@ const AppNavigator = () => {
           },
         }}>
         {(props) => <Notificaton {...props} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="FileShare"
+        options={{
+          title: 'File Share',
+          headerStyle: {
+            backgroundColor: '#424769',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: "#fff"
+          },
+        }}>
+        {(props) => <FileShare {...props} />}
       </Stack.Screen>
 
       <Stack.Screen name="Login"
