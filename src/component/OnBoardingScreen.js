@@ -55,7 +55,7 @@ const OnBoardingScreen = () => {
                         { opacity: opacityAnim }
                     ]}
                 >
-                    Task Management Based on Your Location!
+                    Task Management Based on Location!
                 </Animated.Text>
             </View>
             <View className="mt-52">

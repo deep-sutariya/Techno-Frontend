@@ -30,6 +30,12 @@ const requestPermissions = async () => {
             await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
                 accuracy: Location.Accuracy.Balanced,
                 timeInterval: 10000,
+                foregroundService:{
+                    killServiceOnDestroy: false,
+                    notificationTitle: "Runnnig in Background",
+                    notificationBody: "You can close the app",
+                    notificationColor: "#7077A1"
+                }
             });
         }
     }
@@ -45,10 +51,11 @@ const Home = () => {
 
     const [location, setLocation] = useState("");
     const [fetchlocation, setFetchlocation] = useState([]);
+    const [sendLocation, setSendLocation] = useState([]);
 
     const [expoPushToken, setExpoPushToken] = useState('');
-
-
+    
+    
     TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
         console.log('--?Background');
         if (error) {
@@ -57,9 +64,13 @@ const Home = () => {
         if (data) {
             const { locations } = data;
             let currentLocation = { lat: locations[0].coords.latitude, lon: locations[0].coords.longitude };
-            console.log(currentLocation);
-            setLoc(currentLocation);
-            if (inSameArea?.data?._id && inSameArea?.status && currentLocation) {
+            console.log(currentLocation); 
+            if(currentLocation?.lat || currentLocation?.lon)
+                setLoc(currentLocation);
+            else{
+                getLocation().then((newLoc) => setLoc(newLoc))
+            }
+            if (inSameArea?.data?._id && inSameArea?.status && loc) {
                 let tasks = inSameArea?.data?.tasks.map(task => task.title).join('\n');
                 if (tasks.length > 0 && expoPushToken.length > 0) {
                     sendNoti(inSameArea?.data?.address, tasks, inSameArea?.data?._id);
@@ -76,6 +87,7 @@ const Home = () => {
             setExpoPushToken(token)
         });
         fetchLocation();
+        getLocation().then((newLoc) => setLoc(newLoc))
         const intervalId = setInterval(() => {
             getLocation().then((newLoc) => setLoc(newLoc))
         }, 10000);
@@ -186,8 +198,10 @@ const Home = () => {
     }
 
     const handleAdd = async () => {
+        console.log("sannfknesk");
+        console.log("------------",sendLocation);
         try {
-            const res = await axios.post(`${process.env['API_BASE_URL']}/addlocation`, fetchlocation);
+            const res = await axios.post(`${process.env['API_BASE_URL']}/addlocation`, sendLocation);
             if (res?.status === 500) {
                 alert(res?.data?.message)
             }
@@ -236,6 +250,10 @@ const Home = () => {
 
     }
 
+    useEffect(()=>{
+        console.log("--->",fetchlocation[0]?.address);
+    }, [fetchlocation])
+
 
     return (
         // <ScrollView>
@@ -247,7 +265,7 @@ const Home = () => {
                     <Text className="text-xl font-bold text-gray-800">Add Locations</Text>
                 </View>
                 <TextInput
-                    className={`px-3 py-2 min-w-full bg-offwhite ${fetchlocation.length > 0 ? " rounded-t-lg" : "rounded-lg"} border border-black text-xl`}
+                    className={`px-3 py-2 min-w-full bg-offwhite ${fetchlocation.length > 0 ? " rounded-t-lg" : "rounded-lg"} border border-gray-500 text-xl`}
                     placeholder="location"
                     id='location'
                     value={location}
@@ -266,6 +284,7 @@ const Home = () => {
                                     return <TouchableOpacity key={index} className={`${index != fetchlocation.length - 1 ? ' border-b border-dashed' : ''}`}
                                         onPress={() => {
                                             setLocation(fetchlocation[index].address);
+                                            setSendLocation([fetchlocation[index]]);
                                             setFlag(true);
                                         }} >
                                         <Text className='text-base text-white py-2'>{fetchlocation[val].address}</Text>

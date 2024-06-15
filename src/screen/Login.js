@@ -4,6 +4,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import axios from 'axios';
+import { EmailValidator } from "../utils/inputValidation";
 
 
 const Login = ({ navigation, setUserData }) => {
@@ -13,14 +14,31 @@ const Login = ({ navigation, setUserData }) => {
     const [message, setMessage] = useState("");
 
     const handleLogin = async () => {
-        // 
-        alert("Login Success!")
+        if(email){
+            if(EmailValidator(email)){
+                if(password){
+                    setEmail("");
+                    setPassword("");
+                    setMessage("");
+                    alert("Login Success!")
+                }
+                else{
+                    setMessage("Enter Password");
+                }
+            }
+            else{
+                setMessage("Enter Valid Email");
+            }
+        }
+        else{
+            setMessage("Enter Email");
+        }
     }
 
     return (
         <View className="flex-1 gap-6 justify-center items-center ">
 
-            <View className="flex-row items-center self-stretch justify-center gap-3 mb-4">
+            <View className="flex-row items-center self-stretch justify-center gap-x-3 mb-4 py-2">
                 <Text className="text-4xl font-bold text-gray-800">Login</Text>
                 <FontAwesome5 name="user-lock" size={24} color="black" className="animate-spin" />
             </View>
@@ -32,7 +50,7 @@ const Login = ({ navigation, setUserData }) => {
                     value={email}
                     onChangeText={(text) => {
                         setEmail(text);
-                        setMessage("");
+                        // setMessage("");
                     }}
                     autoCapitalize="none"
                     keyboardType="email-address"
@@ -44,7 +62,7 @@ const Login = ({ navigation, setUserData }) => {
                     value={password}
                     onChangeText={(text) => {
                         setPassword(text);
-                        setMessage("");
+                        // setMessage("");
                     }}
                     secureTextEntry={true}
                 />

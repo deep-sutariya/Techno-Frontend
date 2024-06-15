@@ -8,6 +8,7 @@ import { Entypo } from '@expo/vector-icons';
 const LocationCard = ({ location, confirmShow, fetchLocation }) => {
     const [showForm, setShowForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [editFormId, setEditFormId] = useState(null);
     const [taskTitle, setTaskTitle] = useState('');
     const [taskIdToEdit, setTaskIdToEdit] = useState(null);
 
@@ -33,13 +34,14 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
 
     const handleEditTask = async () => {
         try {
-            const task = { title: taskTitle };
+            const task = { title: taskTitle.trim() };
             console.log(task);
             const response = await axios.post(`${process.env['API_BASE_URL']}/updatetask`, { id: location._id, taskId: taskIdToEdit, updatedTask: task });
             // console.log(response?.data);
             setTaskTitle('');
             setShowForm(false);
             setShowEditForm(false);
+            setEditFormId(null)
             fetchLocation()
         } catch (error) {
             console.error('Error updating task:', error);
@@ -72,7 +74,7 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
                 <View key={task._id} className="flex-row items-center justify-between bg-gray-200 p-2 rounded-md mb-2">
                     <View className="py-1 flex-row justify-between">
                         {
-                            showEditForm ?
+                            showEditForm && editFormId==task._id?
                                 <View className="rounded-lg flex-row justify-between items-center mx-auto w-full">
                                     <TextInput
                                         value={taskTitle}
@@ -90,9 +92,9 @@ const LocationCard = ({ location, confirmShow, fetchLocation }) => {
                                 <Text className="font-semibold flex-[0.98]">{task.title}</Text>
                         }
                         {
-                            !showEditForm ?
+                            !showEditForm || editFormId!=task._id ?
                                 <View className="flex-row items-center">
-                                    <TouchableOpacity onPress={() => { setTaskIdToEdit(task._id); setTaskTitle(task.title); setShowEditForm(true); }} className="mr-2">
+                                    <TouchableOpacity onPress={() => { setTaskIdToEdit(task._id); setTaskTitle(task.title); setShowEditForm(true); setEditFormId(task._id) }} className="mr-2">
                                         <FontAwesome6 name="edit" size={16} color="black" />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => handleDeleteTask(task._id)}>
